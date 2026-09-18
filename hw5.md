@@ -24,12 +24,16 @@ create table research_questions (
   interview_id int not null references interviews (id)
 );
 
+-- Chỗ này research_questions đang reference interviews (interview_id) nha anh, nhưng theo bài thì research questions thuộc về research plan (đặt ra 1 lần cho cả plan), không phải riêng từng interview ạ. Nếu để interview_id thì mỗi interview phải tự tạo lại research question của nó, trong khi nhiều interviews trong cùng 1 plan lẽ ra phải share chung 1 bộ research questions đó. 
+-- Nếu đây là do anh làm bài sớm quá thì em nhận lỗi nhen, do hồi đầu đề bài có bị lỗi 🥲
+
 create table interview_questions (
   id int primary key generated always as identity, 
   content text not null,
   created_at timestamptz default now(),
   research_id int not null references research_questions (id)
 );
+-- Tất cả còn lại đều oke rùi anh
 
 ## Part 2 - Populate Database
 
@@ -40,14 +44,18 @@ insert into plans (name) values
 insert into interviews (interviewee, interview_date, content, plan_id) values 
   ('Nghi Nguyen', '2026-09-20', 'My team and I created Bird DJ, a vibecoded soundboard that would facilitate playing different bird calls and songs, bird descriptions, field notes, and more.', 1),
   ('Ngoc Nguyen', '2026-09-22',' We asked participants to design a retrospective birding audio experience that would showcase their latest birding encounter.', 2);
+-- [advanced comment]: Thực ra phần mock content ở đây thì đúng định dạng rùi nha anh, mà ví dụ content thiệt của interview thì nên để thiệt lun để nhìn cho dễ
+-- Bài tập này em tạo ra để mọi ngừi có sense về việc mình hình dung ra dữ liệu thật ra sao nên làm càng thật càng tốt ạ
 
 insert into research_questions (content, interview_id) values
   ('Do user feel it easy to use?', 1),
   ('Do they remember the values it bring?',1);
+-- Này đang chưa có RQ cho cái plan 2 anh ưi (như comment trước em có nói FK nên là plan trong trường hợp này nhen)
 
 insert into interview_questions (content, research_id) values 
   ('Can they complete OBD quickly?',1),
   ('Did they confuse when finish the job?',1);
+-- Này đang chưa có mock data cho cái RQ 2 nha anh, bên trên anh đang tạo 2 cái RQ nhưng mình mới có IQ của RQ 1 thui ạ
 
 ## Part 3 / Iteration 1 - Table changes
 
@@ -56,6 +64,7 @@ insert into interview_questions (content, research_id) values
 alter table interviews 
   add column status text
   check (status in ('planned','completed','cancelled'));
+-- Tốt nha anh ới
 
 ### Update existing row
 
@@ -88,6 +97,7 @@ limit 1;
 
 /* Iteration 1 - reflect: 
   If we drop & recreate a table, we will lost all data that we had (it's dangerous if we had real users) So we only modify the existing data table keep the data we had. */ 
+-- Reflection này là đúng nha anh, liu ý một chút là SQL ban đầu submit là mình để tạo ra một database và để refer tới khi cần chứ không phải mình sẽ sửa trên đó và chạy lại.
 
 ## Part 4 / Iteration 2 : New Table
 
