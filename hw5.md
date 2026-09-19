@@ -1,7 +1,7 @@
 # HW5 - Database design
 
 ## Part 1 - Design the Database
-
+'''sql
 create table plans (
   id int primary key generated always as identity,
   name text not null,
@@ -30,6 +30,7 @@ create table interview_questions (
   created_at timestamptz default now(),
   research_id int not null references research_questions (id)
 );
+'''
 
 ## Part 2 - Populate Database
 
